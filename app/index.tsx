@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 export default function Index() {
   return (
     <View>
-      <Text>The Empire</Text>
+      <Text className="text-red-600">The Empire</Text>
     </View>
   );
 }
