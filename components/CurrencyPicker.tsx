@@ -1,9 +1,11 @@
 import { Feather } from "@expo/vector-icons";
+import { hasFlag } from "country-flag-icons";
 import cc from "currency-codes";
 import getSymbol from "currency-symbol-map";
 import { useMemo, useState } from "react";
 import {
   FlatList,
+  Image,
   Modal,
   Text,
   TextInput,
@@ -12,7 +14,21 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export type CurrencyEntry = { code: string; name: string; symbol: string };
+export type CurrencyEntry = {
+  code: string;
+  name: string;
+  symbol: string;
+  countryCode: string | null;
+};
+
+function getCountryCode(currencyCode: string): string | null {
+  const iso = currencyCode.slice(0, 2);
+  return hasFlag(iso) ? iso : null;
+}
+
+function flagUri(countryCode: string) {
+  return `https://flagcdn.com/w80/${countryCode.toLowerCase()}.png`;
+}
 
 export const ALL_CURRENCIES: CurrencyEntry[] = cc
   .codes()
@@ -20,8 +36,34 @@ export const ALL_CURRENCIES: CurrencyEntry[] = cc
     code,
     name: cc.code(code)?.currency ?? code,
     symbol: getSymbol(code) ?? code,
+    countryCode: getCountryCode(code),
   }))
   .filter((c) => c.symbol !== c.code); // drop ones with no real symbol
+
+export function FlagWithSymbol({
+  countryCode,
+  symbol,
+}: {
+  countryCode: string | null;
+  symbol: string;
+}) {
+  return (
+    <View className="w-16 flex-row items-center gap-2">
+      {countryCode ? (
+        <Image
+          source={{ uri: flagUri(countryCode) }}
+          accessibilityLabel={`${countryCode} flag`}
+          className="bg-[#F0EDE6]"
+          style={{ width: 22, height: 15 }}
+          resizeMode="cover"
+        />
+      ) : (
+        <View className="bg-[#E8E6DF]" style={{ width: 22, height: 15 }} />
+      )}
+      <Text className="text-brand-text-secondary text-sm">{symbol}</Text>
+    </View>
+  );
+}
 
 export function CurrencyPicker({
   visible,
@@ -81,11 +123,12 @@ export function CurrencyPicker({
                 onSelect(item);
                 setSearch("");
               }}
-              className="flex-row items-center px-5 py-3.5 border-b border-[#F0EDE6]"
+              className="flex-row items-center px-5 py-3.5 border-b border-[#F0EDE6] gap-4"
             >
-              <Text className="text-brand-text-secondary w-8 text-sm">
-                {item.symbol}
-              </Text>
+              <FlagWithSymbol
+                countryCode={item.countryCode}
+                symbol={item.symbol}
+              />
               <Text className="text-brand-bg text-sm font-medium w-12">
                 {item.code}
               </Text>

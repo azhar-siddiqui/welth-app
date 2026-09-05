@@ -1,4 +1,8 @@
-import { ALL_CURRENCIES, CurrencyPicker } from "@/components/CurrencyPicker";
+import {
+  ALL_CURRENCIES,
+  CurrencyPicker,
+  FlagWithSymbol,
+} from "@/components/CurrencyPicker";
 import { useSupabase } from "@/hooks/useSupabase";
 import {
   OnboardingFormValues,
@@ -172,10 +176,15 @@ export default function OnboardingScreen() {
             onPress={() => setPickerOpen(true)}
             className="flex-row items-center justify-between bg-white border border-[#E8E6DF] rounded-xl px-4 py-3.5 mb-6"
           >
-            <Text className="text-sm text-brand-bg">
-              {selectedCurrency.symbol} {selectedCurrency.code} —{" "}
-              {selectedCurrency.name}
-            </Text>
+            <View className="flex-row items-center gap-2">
+              <FlagWithSymbol
+                countryCode={selectedCurrency.countryCode}
+                symbol={selectedCurrency.symbol}
+              />
+              <Text className="text-sm text-brand-bg">
+                {selectedCurrency.code} — {selectedCurrency.name}
+              </Text>
+            </View>
             <Feather name="chevron-down" size={16} color="#8A8D96" />
           </TouchableOpacity>
 
