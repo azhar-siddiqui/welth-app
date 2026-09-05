@@ -5,7 +5,7 @@ import {
 } from "@/components/CurrencyPicker";
 import { useSupabase } from "@/hooks/useSupabase";
 import {
-  OnboardingFormValues,
+  type OnboardingFormValues,
   onboardingSchema,
 } from "@/lib/schemas/onboarding";
 import { useUserStore } from "@/store/userStore";
